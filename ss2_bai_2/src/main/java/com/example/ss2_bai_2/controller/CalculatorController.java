@@ -1,58 +1,35 @@
 package com.example.ss2_bai_2.controller;
 
+import com.example.ss2_bai_2.service.CalculatorService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 @Controller
 public class CalculatorController {
+    private final CalculatorService calculatorService;
+
+    public CalculatorController(CalculatorService calculatorService) {
+        this.calculatorService = calculatorService;
+    }
+
     @GetMapping("/calculator")
-    private String home() {
+    public String home() {
         return "calculator";
     }
 
-    @PostMapping("/add")
-    private String add(@RequestParam(value = "num1", required = false, defaultValue = "0") float num1,
-                       @RequestParam(value = "num2", required = false, defaultValue = "0") float num2, RedirectAttributes attributes) {
-        float result = num1 + num2;
+    @PostMapping("/calculate")
+    public String calculate(@RequestParam(value = "num1", defaultValue = "0") float num1,
+                            @RequestParam(value = "num2", defaultValue = "0") float num2,
+                            @RequestParam("operator") String operator,
+                            RedirectAttributes attributes) {
+        String result = calculatorService.calculate(num1, num2, operator);
+
         attributes.addFlashAttribute("result", result);
         attributes.addFlashAttribute("num1", num1);
         attributes.addFlashAttribute("num2", num2);
-        return "redirect:/calculator";
-    }
+        attributes.addFlashAttribute("operator", operator);
 
-    @PostMapping("/sub")
-    private String sub(@RequestParam(value = "num1", required = false, defaultValue = "0") float num1,
-                       @RequestParam(value = "num2", required = false, defaultValue = "0") float num2, RedirectAttributes attributes) {
-        float result = num1 - num2;
-        attributes.addFlashAttribute("result", result);
-        attributes.addFlashAttribute("num1", num1);
-        attributes.addFlashAttribute("num2", num2);
-        return "redirect:/calculator";
-    }
-
-    @PostMapping("/mul")
-    private String mul(@RequestParam(value = "num1", required = false, defaultValue = "0") float num1,
-                       @RequestParam(value = "num2", required = false, defaultValue = "0") float num2, RedirectAttributes attributes) {
-        float result = num1 * num2;
-        attributes.addFlashAttribute("result", result);
-        attributes.addFlashAttribute("num1", num1);
-        attributes.addFlashAttribute("num2", num2);
-        return "redirect:/calculator";
-    }
-
-    @PostMapping("/div")
-    private String div(@RequestParam(value = "num1", required = false, defaultValue = "0") float num1,
-                       @RequestParam(value = "num2", required = false, defaultValue = "0") float num2, RedirectAttributes attributes) {
-        if (num2 == 0) {
-            attributes.addFlashAttribute("result", "Can not divide by 0");
-        } else {
-            float result = num1 / num2;
-            attributes.addFlashAttribute("result", result);
-        }
-        attributes.addFlashAttribute("num1", num1);
-        attributes.addFlashAttribute("num2", num2);
         return "redirect:/calculator";
     }
 }

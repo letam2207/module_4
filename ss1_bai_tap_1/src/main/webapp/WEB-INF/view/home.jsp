@@ -19,7 +19,7 @@
       <th>VND</th>
     </tr>
     <tr>
-      <td><input type="number" name="usd" value="${usd}"></td>
+      <td><input type="text" name="usd" value="${usd}" min="0"></td>
       <td><p>=></p></td>
       <td><input type="number" name="vnd" value="${vnd}" readonly></td>
     </tr>
