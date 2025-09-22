@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Thêm sản phẩm</title>
+    <meta charset="utf-8">
+    <th:block th:replace="~{common/template::library}"></th:block>
+</head>
+<body>
+<div th:replace="~{common/template::header}"></div>
+
+<div class="container mt-4">
+    <div class="card shadow p-4">
+        <h2 class="mb-3 text-success">➕ Thêm sản phẩm mới</h2>
+
+        <form th:action="@{/product/create}" th:object="${product}" method="post" class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Tên</label>
+                <input type="text" th:field="*{name}" class="form-control" placeholder="Nhập tên sản phẩm">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Giá</label>
+                <input type="number" th:field="*{price}" class="form-control" placeholder="Nhập giá">
+            </div>
+            <div class="col-md-12">
+                <label class="form-label">Mô tả</label>
+                <textarea th:field="*{describe}" class="form-control" rows="3" placeholder="Nhập mô tả"></textarea>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Nhà sản xuất</label>
+                <input type="text" th:field="*{manufacturer}" class="form-control" placeholder="Nhập nhà sản xuất">
+            </div>
+            <div class="col-12 text-end">
+                <button type="submit" class="btn btn-success">💾 Lưu</button>
+                <a th:href="@{/product}" class="btn btn-secondary">⬅ Quay lại</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

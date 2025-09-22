@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Danh sách sản phẩm</title>
+    <th:block th:replace="~{common/template::library}"></th:block>
+</head>
+<body>
+<div th:replace="~{common/template::header}"></div>
+
+<div class="container mt-4">
+    <h2 class="mb-3">📦 Danh sách sản phẩm</h2>
+
+    <form th:action="@{/product/search}" method="get" class="row g-2 mb-3">
+        <div class="col-md-6">
+            <input type="text" name="name" class="form-control" placeholder="Nhập tên sản phẩm"
+                   th:value="${search}">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">🔍 Tìm kiếm</button>
+        </div>
+        <div class="col-md-4 text-end">
+            <a th:href="@{/product/create}" class="btn btn-success">➕ Thêm sản phẩm mới</a>
+        </div>
+    </form>
+
+    <table class="table table-bordered table-hover align-middle text-center">
+        <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Tên</th>
+            <th>Giá (VNĐ)</th>
+            <th>Nhà sản xuất</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="product : ${products}">
+            <td th:text="${product.id}"></td>
+            <td th:text="${product.name}"></td>
+            <td th:text="${#numbers.formatDecimal(product.price, 0, 'POINT', 0, 'COMMA')}"></td>
+            <td th:text="${product.manufacturer}"></td>
+            <td>
+                <a th:href="@{|/product/${product.id}|}" class="btn btn-info btn-sm">📖 Chi tiết</a>
+                <a th:href="@{|/product/update/${product.id}|}" class="btn btn-warning btn-sm">✏️ Sửa</a>
+                <a th:href="@{|/product/delete/${product.id}|}" class="btn btn-danger btn-sm"
+                   onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?')">🗑️ Xóa</a>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(products)}">
+            <td colspan="5" class="text-muted">⚠️ Không có sản phẩm nào</td>
+        </tr>
+        </tbody>
+    </table>
+    <p id="message" th:text="${message}"></p>
+    <script>
+        setTimeout(function () {
+            document.getElementById("message").style.display = "none";
+        }, 3000)
+    </script>
+</div>
+</body>
+</html>
