@@ -1,14 +1,13 @@
-package com.example.ss4_bai_1.controller;
+package com.example.ss5_bai_1.controller;
 
-import com.example.ss4_bai_1.entity.Product;
-import com.example.ss4_bai_1.exception.ProductNotFoundException;
-import com.example.ss4_bai_1.service.IProductService;
+import com.example.ss5_bai_1.entity.Product;
+import com.example.ss5_bai_1.exception.ProductNotFoundException;
+import com.example.ss5_bai_1.service.IProductService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -46,7 +45,7 @@ public class ProductController {
         if (bindingResult.hasErrors()) {
             return "product/create";
         }
-        productService.add(product);
+        productService.save(product);
         redirect.addFlashAttribute("message", "Thêm mới thành công");
         return "redirect:/product";
     }
@@ -54,7 +53,7 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public String getProductById(@PathVariable Integer id, ModelMap model) {
-        Product product = productService.searchById(id);
+        Product product = productService.findById(id);
         if (product == null) {
             return "redirect:/error";
         }
@@ -65,7 +64,7 @@ public class ProductController {
 
     @GetMapping("/update/{id}")
     public String showUpdateForm(@PathVariable Integer id, ModelMap model) {
-        Product product = productService.searchById(id);
+        Product product = productService.findById(id);
         if (product == null) {
             throw new ProductNotFoundException("Không tìm thấy sản phẩm" + id);
         }
@@ -82,7 +81,7 @@ public class ProductController {
         if (bindingResult.hasErrors()) {
             return "product/update";
         }
-        Product existingProduct = productService.searchById(product.getId());
+        Product existingProduct = productService.findById(product.getId());
         if (existingProduct == null) {
             model.addAttribute("message", "Không tìm thấy sản phẩm với ID: " + product.getId());
             return "product/error";
@@ -97,7 +96,7 @@ public class ProductController {
 
     @GetMapping("/delete/{id}")
     public String deleteProduct(@PathVariable Integer id, RedirectAttributes redirect) {
-        Product product = productService.searchById(id);
+        Product product = productService.findById(id);
         if (product == null) {
             throw new ProductNotFoundException("Không tìm thấy sản phẩm có ID: " + id);
         }
@@ -110,7 +109,7 @@ public class ProductController {
 
     @GetMapping("/search")
     public String searchProduct(@RequestParam("name") String name, Model model) {
-        List<Product> products = productService.searchByName(name);
+        List<Product> products = productService.findByName(name);
         model.addAttribute("products", products);
         model.addAttribute("search", name);
         return "product/list";

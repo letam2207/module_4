@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Chi tiết sản phẩm</title>
+    <th:block th:replace="~{common/template::library}"></th:block>
+</head>
+<body>
+<div th:replace="~{common/template::header}"></div>
+
+<div class="container mt-4">
+    <div class="card shadow p-4">
+        <h2 class="mb-3 text-info">📖 Thông tin chi tiết sản phẩm</h2>
+
+        <ul class="list-group">
+            <li class="list-group-item"><strong>ID:</strong> <span th:text="${product.id}"></span></li>
+            <li class="list-group-item"><strong>Tên:</strong> <span th:text="${product.name}"></span></li>
+            <li class="list-group-item"><strong>Giá:</strong>
+                <span th:text="${#numbers.formatDecimal(product.price,0,'POINT',0,'COMMA')}"></span> VNĐ
+            </li>
+            <li class="list-group-item"><strong>Mô tả:</strong> <span th:text="${product.describe}"></span></li>
+            <li class="list-group-item"><strong>Nhà sản xuất:</strong> <span th:text="${product.manufacturer}"></span></li>
+        </ul>
+
+        <div class="mt-3 text-end">
+            <a th:href="@{/product}" class="btn btn-secondary">⬅ Quay lại danh sách</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
