@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Thêm Blog</title>
+    <meta charset="utf-8">
+    <th:block th:replace="~{common/template::library}"></th:block>
+</head>
+<body>
+<div th:replace="~{common/template::header}"></div>
+
+<div class="container mt-4">
+    <div class="card shadow p-4">
+        <h2 class="mb-3 text-success">➕ Thêm Blog mới</h2>
+
+        <form th:action="@{/blog/create}" th:object="${blog}" method="post" class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Ngày đăng</label>
+                <input type="date" th:field="*{date}" class="form-control" placeholder="Chọn ngày đăng">
+            </div>
+            <div class="col-md-12">
+                <label class="form-label">Mô tả</label>
+                <textarea th:field="*{describe}" class="form-control" rows="3" placeholder="Nhập mô tả"></textarea>
+            </div>
+            <div class="col-md-12">
+                <label class="form-label">Nội dung</label>
+                <textarea th:field="*{context}" class="form-control" rows="6" placeholder="Nhập nội dung"></textarea>
+            </div>
+            <div class="col-12 text-end">
+                <button type="submit" class="btn btn-success">💾 Lưu</button>
+                <a th:href="@{/templates/blog}" class="btn btn-secondary">⬅ Quay lại</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

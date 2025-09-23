@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Danh sách Blog</title>
+    <th:block th:replace="~{common/template::library}"></th:block>
+</head>
+<body>
+<div th:replace="~{common/template::header}"></div>
+
+<div class="container mt-4">
+    <h2 class="mb-3">📝 Danh sách Blog</h2>
+
+    <form th:action="@{/templates/blog/search}" method="get" class="row g-2 mb-3">
+        <div class="col-md-6">
+            <input type="text" name="keyword" class="form-control" placeholder="Nhập từ khóa mô tả hoặc nội dung"
+                   th:value="${search}">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">🔍 Tìm kiếm</button>
+        </div>
+        <div class="col-md-4 text-end">
+            <a th:href="@{/blog/create}" class="btn btn-success">➕ Thêm Blog mới</a>
+        </div>
+    </form>
+
+    <table class="table table-bordered table-hover align-middle text-center">
+        <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Ngày đăng</th>
+            <th>Mô tả</th>
+            <th>Nội dung</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="blog : ${blogs}">
+            <td th:text="${blog.id_blog}"></td>
+            <td th:text="${#temporals.format(blog.date, 'dd/MM/yyyy')}"></td>
+            <td th:text="${blog.describe}"></td>
+            <td th:text="${blog.context}"></td>
+            <td>
+                <a th:href="@{|/blog/${blog.id_blog}|}" class="btn btn-info btn-sm">📖 Chi tiết</a>
+                <a th:href="@{|/blog/update/${blog.id_blog}|}" class="btn btn-warning btn-sm">✏️ Sửa</a>
+                <a th:href="@{|/blog/delete/${blog.id_blog}|}" class="btn btn-danger btn-sm"
+                   onclick="return confirm('Bạn có chắc muốn xóa blog này?')">🗑️ Xóa</a>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(blogs)}">
+            <td colspan="5" class="text-muted">⚠️ Không có blog nào</td>
+        </tr>
+        </tbody>
+    </table>
+    <p id="message" th:text="${message}"></p>
+    <script>
+        setTimeout(function () {
+            document.getElementById("message").style.display = "none";
+        }, 3000)
+    </script>
+</div>
+</body>
+</html>

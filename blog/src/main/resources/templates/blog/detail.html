@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Chi tiết Blog</title>
+    <th:block th:replace="~{common/template::library}"></th:block>
+</head>
+<body>
+<div th:replace="~{common/template::header}"></div>
+
+<div class="container mt-4">
+    <div class="card shadow p-4">
+        <h2 class="mb-3 text-info">📖 Thông tin chi tiết Blog</h2>
+
+        <ul class="list-group">
+            <li class="list-group-item">
+                <strong>ID:</strong> <span th:text="${blog.id_blog}"></span>
+            </li>
+            <li class="list-group-item">
+                <strong>Ngày đăng:</strong> <span th:text="${#temporals.format(blog.date, 'dd/MM/yyyy')}"></span>
+            </li>
+            <li class="list-group-item">
+                <strong>Mô tả:</strong> <span th:text="${blog.describe}"></span>
+            </li>
+            <li class="list-group-item">
+                <strong>Nội dung:</strong> <span th:text="${blog.context}"></span>
+            </li>
+        </ul>
+
+        <div class="mt-3 text-end">
+            <a th:href="@{/blog}" class="btn btn-secondary">⬅ Quay lại danh sách</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
