@@ -12,7 +12,7 @@
 <div class="container mt-4">
     <h2 class="mb-3">📝 Danh sách Blog</h2>
 
-    <form th:action="@{/templates/blog/search}" method="get" class="row g-2 mb-3">
+    <form th:action="@{/blog/search}" method="get" class="row g-2 mb-3">
         <div class="col-md-6">
             <input type="text" name="keyword" class="form-control" placeholder="Nhập từ khóa mô tả hoặc nội dung"
                    th:value="${search}">
@@ -32,7 +32,9 @@
             <th>Ngày đăng</th>
             <th>Mô tả</th>
             <th>Nội dung</th>
+            <th>Thể loại</th>
             <th>Hành động</th>
+
         </tr>
         </thead>
         <tbody>
@@ -41,6 +43,8 @@
             <td th:text="${#temporals.format(blog.date, 'dd/MM/yyyy')}"></td>
             <td th:text="${blog.describe}"></td>
             <td th:text="${blog.context}"></td>
+            <td th:text="${blog.category.name}"></td>
+
             <td>
                 <a th:href="@{|/blog/${blog.id_blog}|}" class="btn btn-info btn-sm">📖 Chi tiết</a>
                 <a th:href="@{|/blog/update/${blog.id_blog}|}" class="btn btn-warning btn-sm">✏️ Sửa</a>
@@ -53,6 +57,28 @@
         </tr>
         </tbody>
     </table>
+
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item" th:classappend=" ${!blogs.hasPrevious()} ? 'disabled'">
+                <a class="page-link" th:href="@{/blog(page=${blogs.number - 1})}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item" th:each="num : ${#numbers.sequence(0, blogs.getTotalPages() - 1)}"
+                th:classappend="${num} == ${blogs.number} ? 'active'">
+                <a class="page-link" th:href="@{/blog(page  = ${num})}" th:text="${num}" ></a>
+            </li>
+
+            <li class="page-item"  th:classappend=" ${!blogs.hasNext()} ? 'disabled'">
+                <a class="page-link" th:href="@{/blog(page=${blogs.number + 1})}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
     <p id="message" th:text="${message}"></p>
     <script>
         setTimeout(function () {

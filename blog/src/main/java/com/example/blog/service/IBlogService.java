@@ -1,6 +1,7 @@
 package com.example.blog.service;
 
 import com.example.blog.entity.Blog;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -15,4 +16,6 @@ public interface IBlogService {
     void update(Blog blog);
 
     void delete(int id);
+
+    Page<Blog> findAllPageable(int page);
 }

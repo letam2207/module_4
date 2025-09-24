@@ -30,5 +30,8 @@ public class Blog {
     @Column(name = "context_blog")
     private String context;
 
+    @ManyToOne
+    @JoinColumn(name = "id_category", referencedColumnName = "id")
+    private Category category;
 
 }

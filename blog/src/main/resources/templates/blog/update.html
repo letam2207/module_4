@@ -26,10 +26,24 @@
                 <label class="form-label">Nội dung</label>
                 <textarea th:field="*{context}" class="form-control" rows="6"></textarea>
             </div>
+            <div class="col-md-6">
+                <label class="form-label">Thể loại</label>
+                <select th:field="*{category}" class="form-select">
+                    <option value="">-- Chọn thể loại --</option>
+                    <option th:each="category: ${categorys}"
+                            th:value="${category.id}"
+                            th:text="${category.name}">
+                    </option>
+                </select>
+            </div>
+
+
+
             <div class="col-12 text-end">
                 <button type="submit" class="btn btn-warning">💾 Cập nhật</button>
-                <a th:href="@{/templates/blog}" class="btn btn-secondary">⬅ Quay lại</a>
+                <a th:href="@{/blog}" class="btn btn-secondary">⬅ Quay lại</a>
             </div>
+
         </form>
     </div>
 </div>

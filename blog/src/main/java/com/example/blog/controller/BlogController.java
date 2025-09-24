@@ -2,7 +2,9 @@ package com.example.blog.controller;
 
 import com.example.blog.entity.Blog;
 import com.example.blog.exception.BlogNotFoundException;
+import com.example.blog.service.CategoryService;
 import com.example.blog.service.IBlogService;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -18,23 +20,32 @@ import java.util.List;
 public class BlogController {
 
     private final IBlogService blogService;
+    private final CategoryService categoryService;
 
-    public BlogController(IBlogService blogService) {
+    public BlogController(IBlogService blogService, CategoryService categoryService) {
         this.blogService = blogService;
+        this.categoryService = categoryService;
     }
 
 
     @GetMapping
-    public String getAllBlog(Model model) {
-        List<Blog> blogs = blogService.findAll();
+    public String getAllBlog(Model model , @RequestParam(name = "page", defaultValue = "0")int page) {
+        Page<Blog> blogs = blogService.findAllPageable(page);
         model.addAttribute("blogs", blogs);
         return "blog/list";
     }
 
+//    @GetMapping
+//    public String getAllStudents(Model model) {
+//        List<Blog> blogs = blogService.findAll();
+//        model.addAttribute("blogs", blogs);
+//        return "blog/list";
+//    }
 
     @GetMapping("/create")
     public String createBlog(ModelMap model) {
         model.addAttribute("blog", new Blog());
+        model.addAttribute("categorys", categoryService.findAll());
         return "blog/create";
     }
 
