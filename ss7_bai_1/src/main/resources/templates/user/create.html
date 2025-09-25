@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Thêm mới User</title>
+  <th:block th:replace="~{common/template::library}"></th:block>
+  <th:block th:replace="~{common/template::style}"></th:block>
+</head>
+<body>
+<div th:replace="~{common/template::header}"></div>
+
+<h1>Thêm mới</h1>
+<form method="post" th:object="${userDto}">
+
+  <label>Tên</label>
+  <input type="text" th:field="*{firstname}"/>
+  <br>
+  <small class="err" th:errors="*{firstname}"></small>
+  <br>
+
+  <label>Họ</label>
+  <input type="text" th:field="*{lastname}"/>
+  <br>
+  <small class="err" th:errors="*{lastname}"></small>
+  <br>
+
+  <label>SĐT</label>
+  <input type="text" th:field="*{phoneNumber}"/>
+  <br>
+  <small class="err" th:errors="*{phoneNumber}"></small>
+  <br>
+
+  <label>Tuổi</label>
+  <input type="number" th:field="*{age}"/>
+  <br>
+  <small class="err" th:errors="*{age}"></small>
+  <br>
+
+  <label>Email</label>
+  <input type="text" th:field="*{email}"/>
+  <br>
+  <small class="err" th:errors="*{email}"></small>
+  <br>
+
+  <button type="submit">Thêm</button>
+</form>
+
+
+</body>
+</html>

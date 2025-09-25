@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Cập nhật bài hát</title>
+</head>
+<body>
+<th:block th:replace="~{common/template::library}"></th:block>
+<th:block th:replace="~{common/template::header}"></th:block>
+
+<div class="container mt-4">
+  <h2 class="mb-4 text-warning">Cập nhật bài hát</h2>
+
+  <form th:action="@{'/song/update/' + ${id}}" th:object="${songDto}" method="post">
+    <div class="mb-3">
+      <label class="form-label">Tên bài hát</label>
+      <input type="text" th:field="*{songName}" class="form-control">
+      <div class="err" th:errors="*{songName}"></div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Nghệ sĩ</label>
+      <input type="text" th:field="*{artistName}" class="form-control">
+      <div class="err" th:errors="*{artistName}"></div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Thể loại</label>
+      <input type="text" th:field="*{musicGenre}" class="form-control">
+      <div class="err" th:errors="*{musicGenre}"></div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Cập nhật</button>
+    <a th:href="@{/song}" class="btn btn-secondary">Quay lại</a>
+  </form>
+</div>
+
+</body>
+</html>
