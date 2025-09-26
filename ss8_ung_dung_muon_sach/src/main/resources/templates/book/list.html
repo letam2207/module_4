@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <th:block th:replace="~{common/template::library}">
+
+    </th:block>
+</head>
+<body>
+<div th:replace="~{common/template::header}">
+</div>
+<h2 class="mb-3">📚 Danh sách sách trong thư viện</h2>
+
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Tên sách</th>
+        <th>Tác giả</th>
+        <th>Số lượng</th>
+        <th>Thao tác</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="book : ${books}">
+        <td th:text="${book.id}"></td>
+        <td>
+            <a th:href="@{/books/{id}(id=${book.id})}" th:text="${book.title}"></a>
+        </td>
+        <td th:text="${book.author}"></td>
+        <td th:text="${book.quantity}"></td>
+        <td>
+            <form th:action="@{/books/{id}/borrow(id=${book.id})}" method="post">
+                <button type="submit" class="btn btn-primary">Mượn</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<a href="/books/return" class="btn btn-warning mt-3">📖 Trả sách</a>
+<p id="message"
+   th:if="${message}"
+   th:text="${message}"
+   style="color: green; font-weight: bold;">
+</p>
+
+<p id="error"
+   th:if="${error}"
+   th:text="${error}"
+   style="color: red; font-weight: bold;">
+</p>
+
+<script>
+    setTimeout(function () {
+        let msg = document.getElementById("message");
+        let err = document.getElementById("error");
+        if (msg) {
+            msg.style.display = "none";
+        }
+        if (err) {
+            err.style.display = "none";
+        }
+    }, 3000);
+</script>
+
+</body>
+</html>
