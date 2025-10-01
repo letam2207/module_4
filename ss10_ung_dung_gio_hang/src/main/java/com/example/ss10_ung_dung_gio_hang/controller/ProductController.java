@@ -1,6 +1,7 @@
 package com.example.ss10_ung_dung_gio_hang.controller;
 
 import com.example.ss10_ung_dung_gio_hang.entity.Product;
+import com.example.ss10_ung_dung_gio_hang.exception.ProductNotFoundException;
 import com.example.ss10_ung_dung_gio_hang.service.ProductService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,9 +29,10 @@ public class ProductController {
     public String viewProduct(@PathVariable Integer id, Model model) {
         Product product = productService.findById(id);
         if (product == null) {
-            return "redirect:/products";
+            throw new ProductNotFoundException("Sản phẩm với ID " + id + " không tồn tại.");
         }
         model.addAttribute("product", product);
         return "product/detail";
     }
+
 }

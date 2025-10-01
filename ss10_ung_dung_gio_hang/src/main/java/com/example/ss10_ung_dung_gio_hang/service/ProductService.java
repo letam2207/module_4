@@ -13,6 +13,7 @@ public class ProductService implements IProductService{
     public ProductService(IProductRepository productRepository){
         this.productRepository = productRepository;
     }
+
     @Override
     public List<Product> findAll() {
         return productRepository.findAll();

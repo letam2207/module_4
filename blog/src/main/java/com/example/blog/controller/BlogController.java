@@ -4,15 +4,18 @@ import com.example.blog.entity.Blog;
 import com.example.blog.exception.BlogNotFoundException;
 import com.example.blog.service.CategoryService;
 import com.example.blog.service.IBlogService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
 
 @Controller
 @RequestMapping("/blog")
@@ -116,4 +119,27 @@ public class BlogController {
         redirect.addFlashAttribute("message", "Xóa thành công");
         return "redirect:/blog";
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Blog> updateBlog(@PathVariable Integer id, @Validated @RequestBody Blog blog) {
+        Blog existingBlog = blogService.findById(id);
+        if (existingBlog == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        BeanUtils.copyProperties(blog, existingBlog, "id");
+        blogService.save(existingBlog);
+        return new ResponseEntity<>(existingBlog, HttpStatus.OK);
+    }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBlog(@PathVariable Integer id) {
+        Blog existingBlog = blogService.findById(id);
+        if (existingBlog == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        blogService.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 }

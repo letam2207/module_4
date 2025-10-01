@@ -2,6 +2,7 @@ package com.example.ss10_ung_dung_gio_hang.controller;
 
 import com.example.ss10_ung_dung_gio_hang.entity.Cart;
 import com.example.ss10_ung_dung_gio_hang.entity.Product;
+import com.example.ss10_ung_dung_gio_hang.exception.CartNotFoundException;
 import com.example.ss10_ung_dung_gio_hang.service.CartService;
 import com.example.ss10_ung_dung_gio_hang.service.ProductService;
 import jakarta.servlet.http.HttpSession;
@@ -34,7 +35,7 @@ public class CartController {
         return "cart/view";
     }
 
-    // Thêm sản phẩm vào giỏ
+
     @GetMapping("/add/{id}")
     public String addToCart(@PathVariable Integer id, HttpSession session) {
         Product product = productService.findById(id);
@@ -55,21 +56,39 @@ public class CartController {
                              @RequestParam("quantity") int quantity,
                              HttpSession session) {
         Cart cart = (Cart) session.getAttribute("cart");
-        if (cart != null) {
-            cartService.updateItem(cart, id, quantity);
-            session.setAttribute("cart", cart);
+        if (cart == null) {
+            throw new CartNotFoundException("Giỏ hàng không tồn tại.");
         }
+
+        boolean exists = cart.getItems().stream()
+                .anyMatch(item -> item.getProduct().getId().equals(id));
+
+        if (!exists) {
+            throw new CartNotFoundException("Sản phẩm với ID " + id + " không có trong giỏ hàng.");
+        }
+
+        cartService.updateItem(cart, id, quantity);
+        session.setAttribute("cart", cart);
         return "redirect:/cart/view";
     }
-
 
     @GetMapping("/remove/{id}")
     public String removeFromCart(@PathVariable Integer id, HttpSession session) {
         Cart cart = (Cart) session.getAttribute("cart");
-        if (cart != null) {
-            cartService.removeItem(cart, id);
-            session.setAttribute("cart", cart);
+        if (cart == null) {
+            throw new CartNotFoundException("Giỏ hàng không tồn tại.");
         }
+
+        boolean exists = cart.getItems().stream()
+                .anyMatch(item -> item.getProduct().getId().equals(id));
+
+        if (!exists) {
+            throw new CartNotFoundException("Sản phẩm với ID " + id + " không có trong giỏ hàng.");
+        }
+
+        cartService.removeItem(cart, id);
+        session.setAttribute("cart", cart);
         return "redirect:/cart/view";
     }
+
 }
