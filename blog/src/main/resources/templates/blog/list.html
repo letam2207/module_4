@@ -1,27 +1,35 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Danh sách Blog</title>
-    <th:block th:replace="~{common/template::library}"></th:block>
+    <title>Danh sách Blog (AJAX)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        #message {
+            display: none;
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        #message.success { background-color: #d4edda; color: #155724; }
+        #message.error   { background-color: #f8d7da; color: #721c24; }
+    </style>
 </head>
 <body>
-<div th:replace="~{common/template::header}"></div>
-
 <div class="container mt-4">
-    <h2 class="mb-3">📝 Danh sách Blog</h2>
+    <h2 class="mb-3">📝 Danh sách Blog (AJAX)</h2>
 
-    <form th:action="@{/blog/search}" method="get" class="row g-2 mb-3">
+    <form onsubmit="event.preventDefault(); searchBlogs();" class="row g-2 mb-3">
         <div class="col-md-6">
-            <input type="text" name="keyword" class="form-control" placeholder="Nhập từ khóa mô tả hoặc nội dung"
-                   th:value="${search}">
+            <input type="text" id="keyword" class="form-control" placeholder="Nhập từ khóa mô tả hoặc nội dung">
         </div>
         <div class="col-md-2">
             <button type="submit" class="btn btn-primary w-100">🔍 Tìm kiếm</button>
         </div>
         <div class="col-md-4 text-end">
-            <a th:href="@{/blog/create}" class="btn btn-success">➕ Thêm Blog mới</a>
+            <a href="/blog/create" class="btn btn-success">➕ Thêm Blog mới</a>
         </div>
     </form>
 
@@ -34,57 +42,135 @@
             <th>Nội dung</th>
             <th>Thể loại</th>
             <th>Hành động</th>
-
         </tr>
         </thead>
-        <tbody>
-        <tr th:each="blog : ${blogs}">
-            <td th:text="${blog.id_blog}"></td>
-            <td th:text="${#temporals.format(blog.date, 'dd/MM/yyyy')}"></td>
-            <td th:text="${blog.describe}"></td>
-            <td th:text="${blog.context}"></td>
-            <td th:text="${blog.category.name}"></td>
-
-            <td>
-                <a th:href="@{|/blog/${blog.id_blog}|}" class="btn btn-info btn-sm">📖 Chi tiết</a>
-                <a th:href="@{|/blog/update/${blog.id_blog}|}" class="btn btn-warning btn-sm">✏️ Sửa</a>
-                <a th:href="@{|/blog/delete/${blog.id_blog}|}" class="btn btn-danger btn-sm"
-                   onclick="return confirm('Bạn có chắc muốn xóa blog này?')">🗑️ Xóa</a>
-            </td>
-        </tr>
-        <tr th:if="${#lists.isEmpty(blogs)}">
-            <td colspan="5" class="text-muted">⚠️ Không có blog nào</td>
-        </tr>
+        <tbody id="blogTableBody">
         </tbody>
     </table>
 
+    <nav>
+        <ul class="pagination" id="pagination">
 
-    <nav aria-label="Page navigation example">
-        <ul class="pagination">
-            <li class="page-item" th:classappend=" ${!blogs.hasPrevious()} ? 'disabled'">
-                <a class="page-link" th:href="@{/blog(page=${blogs.number - 1})}" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-            <li class="page-item" th:each="num : ${#numbers.sequence(0, blogs.getTotalPages() - 1)}"
-                th:classappend="${num} == ${blogs.number} ? 'active'">
-                <a class="page-link" th:href="@{/blog(page  = ${num})}" th:text="${num}" ></a>
-            </li>
-
-            <li class="page-item"  th:classappend=" ${!blogs.hasNext()} ? 'disabled'">
-                <a class="page-link" th:href="@{/blog(page=${blogs.number + 1})}" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
         </ul>
     </nav>
 
-    <p id="message" th:text="${message}"></p>
-    <script>
-        setTimeout(function () {
-            document.getElementById("message").style.display = "none";
-        }, 3000)
-    </script>
+    <p id="message"></p>
 </div>
+
+<script>
+    let currentPage = 0;
+    let currentKeyword = "";
+
+    function loadBlogs(page = 0, keyword = "") {
+        currentPage = page;
+        let url = `/api/blog?page=${page}`;
+        if (keyword) url += `&keyword=${keyword}`;
+
+        fetch(url)
+            .then(res => {
+                if (res.status === 204) {
+                    renderTable([], 0, 0);
+                    showMessage(" Không có blog nào", "error");
+                    return null;
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (!data) return;
+                if (Array.isArray(data)) {
+                    renderTable(data, 0, 1);
+                } else {
+                    renderTable(data.content, data.number, data.totalPages);
+                }
+            })
+            .catch(err => showMessage("Lỗi khi tải dữ liệu: " + err, "error"));
+    }
+
+    function renderTable(blogs, page, totalPages) {
+        const tbody = document.getElementById("blogTableBody");
+        tbody.innerHTML = "";
+
+        if (blogs.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="text-muted">⚠️ Không có blog nào</td></tr>`;
+            return;
+        }
+
+        blogs.forEach(blog => {
+            tbody.innerHTML += `
+                <tr id="row-${blog.id_blog}">
+                    <td>${blog.id_blog}</td>
+                    <td>${blog.date ? new Date(blog.date).toLocaleDateString() : ""}</td>
+                    <td>${blog.describe}</td>
+                    <td>${blog.context}</td>
+                    <td>${blog.category ? blog.category.name : ""}</td>
+                    <td>
+                        <a href="/blog/${blog.id_blog}" class="btn btn-info btn-sm">📖 Chi tiết</a>
+                        <a href="/blog/update/${blog.id_blog}" class="btn btn-warning btn-sm">✏️ Sửa</a>
+                        <button class="btn btn-danger btn-sm" onclick="deleteBlog(${blog.id_blog})">🗑️ Xóa</button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        renderPagination(page, totalPages);
+    }
+
+    function renderPagination(page, totalPages) {
+        const pagination = document.getElementById("pagination");
+        pagination.innerHTML = "";
+
+        if (totalPages <= 1) return;
+
+        pagination.innerHTML += `
+            <li class="page-item ${page === 0 ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="loadBlogs(${page - 1}, currentKeyword)">&laquo;</a>
+            </li>
+        `;
+
+        for (let i = 0; i < totalPages; i++) {
+            pagination.innerHTML += `
+                <li class="page-item ${i === page ? 'active' : ''}">
+                    <a class="page-link" href="#" onclick="loadBlogs(${i}, currentKeyword)">${i + 1}</a>
+                </li>
+            `;
+        }
+
+        pagination.innerHTML += `
+            <li class="page-item ${page === totalPages - 1 ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="loadBlogs(${page + 1}, currentKeyword)">&raquo;</a>
+            </li>
+        `;
+    }
+
+    function deleteBlog(id) {
+        if (confirm("Bạn có chắc muốn xóa blog này?")) {
+            fetch(`/api/blog/${id}`, { method: 'DELETE' })
+                .then(res => {
+                    if (res.status === 204) {
+                        document.getElementById("row-" + id).remove();
+                        showMessage(" Xóa blog thành công", "success");
+                    } else {
+                        showMessage("Không tìm thấy blog để xóa", "error");
+                    }
+                })
+                .catch(err => showMessage("Lỗi khi gọi API: " + err, "error"));
+        }
+    }
+
+    function searchBlogs() {
+        currentKeyword = document.getElementById("keyword").value;
+        loadBlogs(0, currentKeyword);
+    }
+
+    function showMessage(msg, type) {
+        const el = document.getElementById("message");
+        el.innerText = msg;
+        el.className = type;
+        el.style.display = "block";
+        setTimeout(() => el.style.display = "none", 3000);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => loadBlogs(0));
+</script>
 </body>
 </html>
