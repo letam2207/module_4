@@ -1,10 +1,10 @@
-package com.example.ss5_bai_1.service;
+package com.example.bai_mau_2_tb.service;
 
-import com.example.ss5_bai_1.entity.Product;
-import com.example.ss5_bai_1.repository.IProductRepository;
+import com.example.bai_mau_2_tb.entity.Product;
+import com.example.bai_mau_2_tb.repository.IProductRepository;
 import org.springframework.stereotype.Service;
-import java.util.List;
 
+import java.util.List;
 @Service
 public class ProductService implements IProductService {
 
@@ -14,10 +14,8 @@ public class ProductService implements IProductService {
         this.productRepository = productRepository;
     }
 
-
     @Override
     public List<Product> findAll() {
-
         return productRepository.findAll();
     }
 
